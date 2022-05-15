@@ -1,6 +1,6 @@
 # PÚRPURA
 
-PÚRPURA es un  juego del estilo "scape room" con opción a una experiencia de juego multijugador, en la cual el usuario con el objetivo de alcanzar la mayor puntuación posible, deberá resolver diferentes pruebas .
+PÚRPURA es un  juego del estilo "scape room" con opción a una experiencia de juego multijugador. Con el objetivo de avanzar en el juego y alcanzar la mayor puntuación posible, el usuario  tendrá que superar  una serie de pruebas que se le presentarn durante el transcurso de la historia.
 
 ## Integrantes del equipo
 
