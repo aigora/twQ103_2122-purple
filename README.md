@@ -1,6 +1,6 @@
 # PÚRPURA
 
-[Descripción breve del proyecto a realizar (2-3 frases).]
+PÚRPURA es un  juego del estilo "scape room" con opción a una experiencia de juego multijugador, en la cual el usuario con el objetivo de alcanzar la mayor puntuación posible, deberá resolver diferentes pruebas .
 
 ## Integrantes del equipo
 
