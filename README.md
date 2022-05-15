@@ -4,7 +4,12 @@
 
 ## Integrantes del equipo
 
-[Nombres, apellidos, y usuario GitHub de los integrantes del equipo.]
+Ruben Ernesto Godoy Salcedo
+
+Moisés Gil de las HEras
+
+Patricia Martín Fuentes
+
 
 ## Objetivos del trabajo
 
