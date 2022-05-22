@@ -5,7 +5,9 @@ PÚRPURA es un  juego del estilo "scape room" con opción a una experiencia de j
 ## Integrantes del equipo
 
 Ruben Ernesto Godoy Salcedo.
+
 Moisés Gil de las Heras.
+
 Patricia Martín Fuente.
 
 
