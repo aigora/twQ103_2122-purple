@@ -20,9 +20,8 @@ typedef struct{
 void menu();
 void partida1jugador();
 void partida2jugadores();
-void puntuaciones();
-void muerte_rojo();
-void muerte_azul();
+void muerte_rojo(jugadores2 v[],clock_t comienzo);
+void muerte_azul(jugadores2 v[],clock_t comienzo);
 void puntuaciones2();
 void calculodepuntos(jugadores v[],clock_t comienzo);
 void calculodepuntos2(jugadores2 v[],clock_t comienzo);
@@ -30,8 +29,9 @@ void calculodepuntos2(jugadores2 v[],clock_t comienzo);
 int main(){
 	setlocale(LC_ALL, "");
 	int opcion,opcion2;
-	
-	
+	int i=0;
+	FILE *f;
+	jugadores v[1000];
 	
 	printf("\tTe damos la bienvenida a púrpura, un scape room en el que no te faltará entretenimiento!!\n");
 	
@@ -73,10 +73,18 @@ int main(){
 				scanf("%d",&opcion2);
 				system("cls");
 				do{
-				
 					switch(opcion2){
 						case 1:
-							puntuaciones;
+							f=fopen("ranking.txt","r");
+							if(f==NULL){
+								printf("Error en la apertura del fichero\n");
+								exit(-1);
+							}
+							while(fscanf(f,"%s %f",&v[i].nombre,&v[i].puntos)!=EOF){
+								printf("%s   %f\n",v[i].nombre,v[i].puntos);
+								i++;
+							}
+							fclose(f);
 						break;
 						case 2:
 							puntuaciones2;
@@ -111,7 +119,7 @@ void menu(){
 }						
 void partida1jugador(){
 	setlocale(LC_ALL, "");
-	int opcion_llave,opcion_fiera,opcion_ordenador,opcion,i;
+	int opcion_llave,opcion_ordenador,opcion,i,k,opcion_cama,opcion_fiera;
 	char cadena[] = "purple";
 	char rep[100], temporal[100];
 	char pal;
@@ -123,8 +131,9 @@ void partida1jugador(){
 	clock_t comienzo;
 	int opcion_destino;
 	int y = 0;
-	
-	
+	FILE *f;
+	jugadores aux;
+
 	printf("Introduzca el nombre del usuario\n");
 	scanf("%s",v[0].nombre);
 	v[0].puntos=0;
@@ -134,8 +143,7 @@ void partida1jugador(){
 		printf("Despiertas. \nTratas con torpeza levantarte del duro suelo mientras haces el esfuerzo de recordar como has llegado donde sea que estes. \nParedes blancas, techo blanco, suelo blanco, todo blanco; a excepción de una puerta negra. \nRevisando entre tus pertenencias encuentras una llave plateada.");
 		printf("\n¿ te arriegas a abrir la puerta ?");
 		printf("\n1. SI");
-		printf("\n2. NO");
-		printf("\n:");
+		printf("\n2. NO\n:");
 		scanf("%d", &opcion);
 		system("cls");
 		switch(opcion){
@@ -153,415 +161,389 @@ void partida1jugador(){
 			break;
 		}
 	}while((opcion != 1) && (opcion != 2));						
-	for(i=0;i<6;i++){
-		switch(i){
-							
-			case 0:
-				do{
-					printf("\nEl lugar en el que te encuentras te incomoda.");
-					printf("\nUn amplio salón de colores suaves con los muebles ordenados.");
-					printf("\nEl paraíso de cualquier minimalista de no ser por el gran retrato que cubre la pared.");
-					printf("\nEl rostro te resulta familiar.");
-					printf("\nEres tú.");						
-					printf("\nTe acercas a la puerta para salir del salón, pero está cerrada.");
-					printf("\nExploras la habitación en busqueda de la llave mientras el cuadro vigila tus pasos con su mirada.");
-					printf("\nTienes que salir de ahí");
-					printf("\n¿ Qué haces ?.");
-					printf("\n1. Apuñalar el cuadro");						
-					printf("\n2. Mover el cuadro");
-					printf("\n3. Tapar los ojos del cuadro\n:");
-					scanf("%d", &opcion);
-					system("cls");
-					switch(opcion){
-						case 1:
-							printf("Te acercas a tu versión pintada y con brusquedad introduces la filosa llave de la habitación blanca.\nUn rugoso corte produce un ruido resquebradijo que resuena en el salón. \nLa pintura sangra.\nY tu junto a ella. \nCaes de rodillas, miras por última vez el cuadro, que aún roto te mira sonriendo. ");
-							printf("\nHas perdido");
-							calculodepuntos(v,comienzo);
-							exit (-1); 
-						break;
-											
-						case 2:
-							printf("Te acercas a tu versión pintada y con cuidado tratas de moverla. \nEl cuadro es más ligero de lo que parecería. \nConsigues levantarlo y apoyarlo bocabajo. \nUn chasquido se escucha de fondo. \nLa puerta ahora está abierta. \nSales del hermoso salón.\n");
-							v[0].puntos+=100;
-						break;
-											
-						case 3:
-							printf("Te acercas a tu versión pintada. \nTu propia mirada indaga en tu ser. \nEs como verse en un espejo. \nTapas esos ojos que tanto te intimidan. \nUn chasquido se escucha de fondo. \nLa puerta ahora está abierta. \nSales del hermoso salón.\n");
-							v[0].puntos+=100;
-						break;
-											
-						default: 
-							system("cls");
-							printf("Introduce una respuesta válida: ");	
-							v[0].puntos=v[0].puntos-10;
-						break;
-					}
-				}while(opcion != 2 && opcion != 3);
-				printf("\n\n");
-									
-									
-									
-			break;
+	do{
+		printf("\nEl lugar en el que te encuentras te incomoda.");
+		printf("\nUn amplio salón de colores suaves con los muebles ordenados.");
+		printf("\nEl paraíso de cualquier minimalista de no ser por el gran retrato que cubre la pared.");
+		printf("\nEl rostro te resulta familiar.");
+		printf("\nEres tú.");						
+		printf("\nTe acercas a la puerta para salir del salón, pero está cerrada.");
+		printf("\nExploras la habitación en busqueda de la llave mientras el cuadro vigila tus pasos con su mirada.");
+		printf("\nTienes que salir de ahí");
+		printf("\n¿ Qué haces ?.");
+		printf("\n1. Apuñalar el cuadro");						
+		printf("\n2. Mover el cuadro");
+		printf("\n3. Tapar los ojos del cuadro\n:");
+		scanf("%d", &opcion);
+		system("cls");
+		switch(opcion){
 			case 1:
-				printf("\nUn pasillo frente a tí.");
-				printf("\nLa luz titilante alumbra el fondo del pasillo donde se encuentra un ascensor.");
-				printf("\nCaminas lento fijandote en las puertas de las habitaciones.");
-				printf("\n130	131		132		133		134		135		136		137		138		139");						
-				printf("\nLlegas al ascensor, pero requiere introducir el número del piso en el que te encuentras.");
-				printf("\nNúmero del piso:");
-				scanf("%d", &opcion);
-				system("cls");
-				if(opcion == 13){
-					v[0].puntos+=100;
-					do{										
-						printf("\nAparece el ascensor.");
-						printf("\nEntras en la angosta cabina.");
-						printf("\nRevisas el numero de pisos, del -2 al 13");
-						printf("\nSelecciona el piso al que te quieres dirigir: ");
-						scanf("%d", &opcion);
-						system("cls");
-							if(opcion<-2 || opcion>13){
-								printf("Introduce una opción válida\n");
-							}
-					}while(opcion<-2 || opcion>13);
-					printf("\nEl ascensor empieza a bajar, pero a medio camino se detiene.");
-					printf("\nNo señala el piso en el que se encuentra.");
-					printf("\nVuelves a estar en un pasillo, a diferencia del anterior que las puertas se enumeran por letras.");
-					printf("\nEntras en la única puerta que está abierta.");	
-				}else{
-					v[0].puntos+=20;	
-					printf("\nEl código era incorrecto.");
-					printf("\nForcejeas las puertas del ascensor y tras mucho esfuerzo consigues abrirlas.");
-					printf("\nBajas por los cables de sujección, con cuidado de no caer.");
-					printf("\nEncuentras una abertura y pasas atraves de ella.");
-					printf("\nVuelves a estar en un pasillo, a diferencia del anterior que las puertas se enumeran por letras.");
-					printf("\nEntras en la única puerta que está abierta.");
-										
-				}
+				printf("Te acercas a tu versión pintada y con brusquedad introduces la filosa llave de la habitación blanca.\nUn rugoso corte produce un ruido resquebradijo que resuena en el salón. \nLa pintura sangra.\nY tu junto a ella. \nCaes de rodillas, miras por última vez el cuadro, que aún roto te mira sonriendo. ");
+				printf("\nHas perdido");
+				calculodepuntos(v,comienzo);
+				exit (-1); 
 			break;
-									
+											
 			case 2:
-				do{
-					printf("\n\n\nNo ves nada.");
-					printf("\nNo sabes donde has entrado.");
-					printf("\nNi un ápice de luz que te diese una pista de como avanzar.");
-					printf("\nTanteando la pared encuentras un interruptor.");
-					printf("\nLa luz te ciega brevemente.");
-					printf("\nEn frente de tí, cinco personas se encuentran inmóviles y tras ellas una puerta.");
-					printf("\nInspecccionas las figuras que se encuentran ante tí.");
-					printf("\nSon esculturas de cera, aunque demacradas por el paso del tiempo.");						
-					printf("\nUn rey, un caballero, un clérigo, un campesino y un esclavo.");
-					printf("\nTodas te extienden una mano y en ella un objeto.");
-					printf("\n1. Tomas la corona del rey");
-					printf("\n2. Tomas la espada del caballero");
-					printf("\n3. Tomas el libro del clérigo");
-					printf("\n4. Tomas el rastrillo del campesino");	
-					printf("\n5. Tomas las cadenas del esclavo\n");	
-					scanf("%d",&opcion);
-					system("cls");								
-					switch(opcion){
-						case 1:
-							printf("La corona entre tus manos reluce. \nEscuchas un crujido. \nLa estatua del caballero cobra vida y blandiendo su espada te atraviesa. \nNo deberías haber tomado la corona.");
-							printf("\nHas perdido");
-							calculodepuntos(v,comienzo);
-							exit (-1);
-						break;											
-						case 2:
-							printf("La espada no cede. \nEscuchas un crujido. \nLa estatua del caballero cobra vida y blandiendo su espada te atraviesa. \nNo deberías haber tomado la espada.");
-							printf("\nHas perdido");
-							calculodepuntos(v, comienzo);
-							exit (-1);
-						break;
-						case 3:
-							printf("El libro que sostenía la estatua es real. \nLo abres. \nVacío. \nHojas en blanco. \nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
-							v[0].puntos+=100;
-						break;										
-						case 4:
-							printf("El rastrillo pesa más de lo que parecía. \nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
-							v[0].puntos+=100;
-						break;
-						case 5:
-							printf("Las cadenas ceden. \nEl esclavo ahora tiene una sonrisa en el rostro.\nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
-							v[0].puntos+=100;
-						break;
-						default: 
-							system("cls");
-							printf("introduce una respuesta válida:\n");
-							v[0].puntos=v[0].puntos-10;	
-						break;	
-					}
-				}while((opcion< 1) || (opcion > 5));
+				printf("Te acercas a tu versión pintada y con cuidado tratas de moverla. \nEl cuadro es más ligero de lo que parecería. \nConsigues levantarlo y apoyarlo bocabajo. \nUn chasquido se escucha de fondo. \nLa puerta ahora está abierta. \nSales del hermoso salón.\n");
+				v[0].puntos+=100;
+			break;
+											
+			case 3:
+				printf("Te acercas a tu versión pintada. \nTu propia mirada indaga en tu ser. \nEs como verse en un espejo. \nTapas esos ojos que tanto te intimidan. \nUn chasquido se escucha de fondo. \nLa puerta ahora está abierta. \nSales del hermoso salón.\n");
+				v[0].puntos+=100;
+			break;
+											
+			default: 
+				system("cls");
+				printf("Introduce una respuesta válida: ");	
+				v[0].puntos=v[0].puntos-10;
+			break;
+		}
+	}while(opcion != 2 && opcion != 3);
+	printf("\n\n");
+	printf("\nUn pasillo frente a tí.");
+	printf("\nLa luz titilante alumbra el fondo del pasillo donde se encuentra un ascensor.");
+	printf("\nCaminas lento fijandote en las puertas de las habitaciones.");
+	printf("\n130	131		132		133		134		135		136		137		138		139");						
+	printf("\nLlegas al ascensor, pero requiere introducir el número del piso en el que te encuentras.");
+	printf("\nNúmero del piso:");
+	scanf("%d", &opcion);
+	system("cls");
+	if(opcion == 13){
+		v[0].puntos+=100;
+		do{										
+			printf("\nAparece el ascensor.");
+			printf("\nEntras en la angosta cabina.");
+			printf("\nRevisas el numero de pisos, del -2 al 13");
+			printf("\nSelecciona el piso al que te quieres dirigir: ");
+			scanf("%d", &opcion);
+			system("cls");
+			if(opcion<-2 || opcion>13){
+				printf("Introduce una opción válida\n");
+			}
+		}while(opcion<-2 || opcion>13);
+		printf("\nEl ascensor empieza a bajar, pero a medio camino se detiene.");
+		printf("\nNo señala el piso en el que se encuentra.");
+		printf("\nVuelves a estar en un pasillo, a diferencia del anterior que las puertas se enumeran por letras.");
+		printf("\nEntras en la única puerta que está abierta.");	
+	}else{
+		v[0].puntos+=20;	
+		printf("\nEl código era incorrecto.");
+		printf("\nForcejeas las puertas del ascensor y tras mucho esfuerzo consigues abrirlas.");
+		printf("\nBajas por los cables de sujección, con cuidado de no caer.");
+		printf("\nEncuentras una abertura y pasas atraves de ella.");
+		printf("\nVuelves a estar en un pasillo, a diferencia del anterior que las puertas se enumeran por letras.");
+		printf("\nEntras en la única puerta que está abierta.");
+										
+	}
+	do{
+		printf("\n\n\nNo ves nada.");
+		printf("\nNo sabes donde has entrado.");
+		printf("\nNi un ápice de luz que te diese una pista de como avanzar.");
+		printf("\nTanteando la pared encuentras un interruptor.");
+		printf("\nLa luz te ciega brevemente.");
+		printf("\nEn frente de tí, cinco personas se encuentran inmóviles y tras ellas una puerta.");
+		printf("\nInspecccionas las figuras que se encuentran ante tí.");
+		printf("\nSon esculturas de cera, aunque demacradas por el paso del tiempo.");						
+		printf("\nUn rey, un caballero, un clérigo, un campesino y un esclavo.");
+		printf("\nTodas te extienden una mano y en ella un objeto.");
+		printf("\n1. Tomas la corona del rey");
+		printf("\n2. Tomas la espada del caballero");
+		printf("\n3. Tomas el libro del clérigo");
+		printf("\n4. Tomas el rastrillo del campesino");	
+		printf("\n5. Tomas las cadenas del esclavo\n");	
+		scanf("%d",&opcion);
+		system("cls");								
+		switch(opcion){
+			case 1:
+				printf("La corona entre tus manos reluce. \nEscuchas un crujido. \nLa estatua del caballero cobra vida y blandiendo su espada te atraviesa. \nNo deberías haber tomado la corona.");
+				printf("\nHas perdido");
+				calculodepuntos(v,comienzo);
+				exit (-1);
+			break;											
+			case 2:
+				printf("La espada no cede. \nEscuchas un crujido. \nLa estatua del caballero cobra vida y blandiendo su espada te atraviesa. \nNo deberías haber tomado la espada.");
+				printf("\nHas perdido");
+				calculodepuntos(v, comienzo);
+				exit (-1);
 			break;
 			case 3:
-				printf("\nUna espesa niebla te nubla la vista.");
-				printf("\nCaminas sin rumbo.");
-				printf("\nHallas un claro bajo un cielo gris.");
-				printf("\nFrente a tí se encuentra una pequeña edificación.");
-				printf("\nEs una horca.");
-				printf("\nEn ella, una inscripción vacía de 6 espacios y un teclado interactivo.");
-				printf("\nSe trata de un macabro juego del ahorcado.");
-				printf("\n¿ Qué haces ?");
-				printf("\n1. Jugar");						
-				printf("\n2. Rendirte\n:");
+				printf("El libro que sostenía la estatua es real. \nLo abres. \nVacío. \nHojas en blanco. \nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
+				v[0].puntos+=100;
+			break;										
+			case 4:
+				printf("El rastrillo pesa más de lo que parecía. \nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
+				v[0].puntos+=100;
+			break;
+			case 5:
+				printf("Las cadenas ceden. \nEl esclavo ahora tiene una sonrisa en el rostro.\nUn fuerte golpe se escucha. \nLa puerta está abierta. \nAvanzas sin saber que será de ti.");
+				v[0].puntos+=100;
+			break;
+			default: 
+				system("cls");
+				printf("introduce una respuesta válida:\n");
+				v[0].puntos=v[0].puntos-10;	
+			break;	
+		}
+	}while((opcion< 1) || (opcion > 5));
+	do{
+		printf("\nUna espesa niebla te nubla la vista.");
+		printf("\nCaminas sin rumbo.");
+		printf("\nHallas un claro bajo un cielo gris.");
+		printf("\nFrente a tí se encuentra una pequeña edificación.");
+		printf("\nEs una horca.");
+		printf("\nEn ella, una inscripción vacía de 6 espacios y un teclado interactivo.");
+		printf("\nSe trata de un macabro juego del ahorcado.");
+		printf("\n¿ Qué haces ?");
+		printf("\n1. Jugar");						
+		printf("\n2. Rendirte\n:");
+		scanf("%d",&opcion);							
+		switch(opcion){
+			case 1:
+				longitud = 0;
+				inicial = 0;
+				j = 0;
+				rep[0] = ' ';
+				rep[1] = '\0';
 				do{
-					scanf("%d",&opcion);							
-					switch(opcion){
-						case 1:
-							longitud = 0;
-							inicial = 0;
-							j = 0;
-							rep[0] = ' ';
-							rep[1] = '\0';
-							do{
-								system("cls");
-								temp=0;
+					system("cls");
+					temp=0;
 													
-								if(inicial == 0) {
-									for(i=0;i<strlen(cadena);i++) {
-										if(cadena[i] == ' ') {
-											temporal[i] = ' ';
-											longitud++;
-										}
-										else{
-											temporal[i] = '_';       
-											longitud++;
-										}
-									}
-								}
-								inicial = 1;
-								temporal[longitud] = '\0';
-								for(i=0;i<strlen(rep);i++){
-									if(rep[i] == pal) {
-										repetir = 1;
-										break;
-									}
-									else {
-										repetir = 0;
-									}
-								}
-												
-								if(repetir == 0) {
-									for(i=0;i<strlen(cadena);i++) {
-										if(cadena[i] == pal) {
-											temporal[i] = pal;
-											acierto++;
-											temp=1;
-										}
-									}
-								}
-													
-								if(repetir == 0) {
-									if(temp == 0) {
-										oportunidades = oportunidades - 1;
-									}
-								}else {
-									printf("Ya has introducido esta letra");
-									printf("\n\n");
-								}
-								printf("\n");
-								for(i=0;i<strlen(temporal);i++) {
-									printf(" %c ",temporal[i]);
-								}
-								printf("\n");
-								if(strcmp(cadena,temporal) == 0) {
-									win = 1;
-									break;
-								}
-								printf("\nLetras Acertadas: %d \n",acierto);
-								printf("Oportunidades Restantes: %d \n",oportunidades);
-								rep[j] = pal;
-								j++;
-								if (oportunidades==0){
-									break;
-								}
-								printf("Introduzca una letra:");
-								scanf("\n%c",&pal);
-							}while(oportunidades != 0);
-							if(win){
-								v[0].puntos+=1000;
-								printf("\n\nLa niebla se despeja. \nFrente a tí el patíbulo se derrumba, permitiendo ver que tras él se encontraba un puerta abierta. \nPasa a través de ella.");
-							}else{
-								printf("\n\nHas agotado tus intentos. \n La cuerda del patíbulo cobra vida y se lanza a tu garganta. \nEs inútil resistirse, fallaste en el ahorcado.");
-								printf("\n Has perdido.");
-								calculodepuntos(v,comienzo);
-								exit (-1);
+					if(inicial == 0) {
+						for(i=0;i<strlen(cadena);i++) {
+							if(cadena[i] == ' ') {
+								temporal[i] = ' ';
+								longitud++;
 							}
-							printf("\n\n");
-						break;
-						case 2:
-							printf("\nTe subes al patíbulo. \nLa cuerda huele a putrefacto. \nPero eso ya no será una preocupación. \nAjustas la cuerda al grosor de tu cuello. \nDos pasos y una ligera caída. \nTe has rendido.");
-							exit (-1);
-						break;	
-											
-						default: 
-							system("cls");
-							printf("introduce una respuesta válida:\n");
-							v[0].puntos=v[0].puntos-10;		
+							else{
+								temporal[i] = '_';       
+								longitud++;
+							}
+						}
+					}
+					inicial = 1;
+					temporal[longitud] = '\0';
+					for(i=0;i<strlen(rep);i++){
+						if(rep[i] == pal) {
+							repetir = 1;
+							break;
+						}
+						else {
+							repetir = 0;
+						}
+					}
+												
+					if(repetir == 0) {
+						for(i=0;i<strlen(cadena);i++) {
+							if(cadena[i] == pal) {
+								temporal[i] = pal;
+								acierto++;
+								temp=1;
+							}
+						}
+					}
+													
+					if(repetir == 0) {
+						if(temp == 0) {
+							oportunidades = oportunidades - 1;
+						}
+					}else {
+						printf("Ya has introducido esta letra");
+						printf("\n\n");
+					}
+					printf("\n");
+					for(i=0;i<strlen(temporal);i++) {
+						printf(" %c ",temporal[i]);
+					}
+					printf("\n");
+					if(strcmp(cadena,temporal) == 0) {
+						win = 1;
 						break;
 					}
-									 
-				}while((opcion != 1) && (opcion != 5));
-			break;
-			case 4:
-				do{
-					printf("\nUna habitación acogedora.");
-					printf("\nFrente a tí un espejo en el que se refleja la habitación.");
-					printf("\nLo mismo si sales por el espejo, sales de la habitación.");
-					printf("\nEL espejo está cerrado por un candado.\n");
-					printf("\nBuscas una llave.");
-					printf("\n1. Revisas la estantería");
-					printf("\n2. Revisas el armario");
-					printf("\n3. Revisas el escritorio");
-					printf("\n4. Dejar de buscar");
-					printf("\n:");
-					scanf("%d",&opcion);
-										
-					switch(opcion){
-						case 1:
-							do{
-								printf("\n1. Revisar estante 1");
-								printf("\n2. Revisar estante 2");
-								printf("\n3. Revisar estante 3");
-								printf("\n4. Dejar de buscar en la estantería");
-								printf("\n:");
-								scanf("%d",&opcion_llave);
-								system("cls");
-								switch(opcion_llave){
-									case 1:		
-										printf("Estante vacío.");
-										v[0].puntos=v[0].puntos-5;	
-									break;
-									case 2:		
-										printf("Estante vacío.");
-										v[0].puntos=v[0].puntos-5;		
-									break;
-									case 3:		
-										printf("Estante vacío.");
-										v[0].puntos=v[0].puntos-5;		
-									break;	
-									case 4:
-									break;
-									default: 
-										system("cls");
-										printf("introduce una respuesta válida: ");	
-										v[0].puntos=v[0].puntos-10;	
-									break;
-								}
-							}while(opcion_llave != 4);
+					printf("\nLetras Acertadas: %d \n",acierto);
+					printf("Oportunidades Restantes: %d \n",oportunidades);
+					rep[j] = pal;
+					j++;
+					if (oportunidades==0){
 						break;
-						case 2:
-							do{
-								printf("\n1. Revisar armario izquierdo");
-								printf("\n2. Revisar armario derecho");
-								printf("\n3. Dejar de buscar en el armario");
-								printf("\n:");
-								scanf("%d",&opcion_llave);
-								system("cls");
-								switch(opcion_llave){
-									case 1:		
-										printf("Se encuentra vacío.");	
-										v[0].puntos=v[0].puntos-5;	
-									break;
-									case 2:		
-										printf("Se encuentra vacío.");
-										v[0].puntos=v[0].puntos-5;		
-									break;
-									case 3:		
-									break;	
-									default: 
-										system("cls");
-										printf("Introduce una respuesta válida: ");	
-										v[0].puntos=v[0].puntos-10;	
-									break;
-								}
-							}while(opcion_llave != 3);
-						break;
-						case 3:
-							do{
-								printf("\n1. Revisar cajón del escritorio");
-								printf("\n2. Dejar de buscar en el escritorio");
-								printf("\n:");
-								scanf("%d",&opcion_llave);
-								system("cls");
-								switch(opcion_llave){
-									case 1:		
-										printf("Hay una llave.");	
-										tener_llave++; 	
-										v[0].puntos+=300;	
-									break;
-									case 2:
-									break;
-									default: 
-										system("cls");
-										printf("Introduce una respuesta válida: ");	
-										v[0].puntos=v[0].puntos-10;	
-									break;
-								}
-							}while(opcion_llave != 2 && opcion_llave != 1);
-						break;	
-						default:
-							system("cls"); 
-							printf("Introduce una respuesta válida:\n");	
-							v[0].puntos=v[0].puntos-10;	
-							break;
-					} 
-				}while(opcion != 4 && opcion_llave!=1);
-				if(tener_llave != 0){
-					printf("Abres el candado. \nPasas a través del espejo, sin saber que te espera más adelante. \n");
-					printf("\n");
+					}
+					printf("Introduzca una letra:");
+					scanf("\n%c",&pal);
+				}while(oportunidades != 0);
+				if(win){
+					v[0].puntos+=1000;
+					printf("\n\nLa niebla se despeja. \nFrente a tí el patíbulo se derrumba, permitiendo ver que tras él se encontraba un puerta abierta. \nPasa a través de ella.");
 				}else{
-					printf("No encuentras la llave. \nVes la desesperación en tu reflejo. \nPasarás hasta el último de tus días en esa habitación.");
-					printf("\nHas perdido.");
+					printf("\n\nHas agotado tus intentos. \n La cuerda del patíbulo cobra vida y se lanza a tu garganta. \nEs inútil resistirse, fallaste en el ahorcado.");
+					printf("\n Has perdido.");
 					calculodepuntos(v,comienzo);
 					exit (-1);
 				}
+				printf("\n\n");
 			break;
-			case 5:
-				printf("\Entras en una habitación.");
-				printf("\nUn rugido te avisa que no te acerques.");
-				printf("\nUna bestia tumbada en su propia sangre impide que llegues a la puerta abierta del otro lado de la habitación.");
-				printf("\nTrata de moverse, pero más sangre brota de su estómago abierto.");
-				printf("\n¿Qué haces?.");
-				printf("\n1.Ignoras a la fiera");
-				printf("\n2.Socorres a la fiera");
-				printf("\n3.Matas a la fiera");
-				printf("\n:");
+			case 2:
+				printf("\nTe subes al patíbulo. \nLa cuerda huele a putrefacto. \nPero eso ya no será una preocupación. \nAjustas la cuerda al grosor de tu cuello. \nDos pasos y una ligera caída. \nTe has rendido.");
+				exit (-1);
+			break;	
+											
+			default: 
+				system("cls");
+				printf("introduce una respuesta válida:\n");
+				v[0].puntos=v[0].puntos-10;		
+			break;
+		}
+									 
+	}while((opcion != 1) && (opcion != 5));
+	do{
+		printf("\nUna habitación acogedora.");
+		printf("\nFrente a tí un espejo en el que se refleja la habitación.");
+		printf("\nLo mismo si sales por el espejo, sales de la habitación.");
+		printf("\nEL espejo está cerrado por un candado.\n");
+		printf("\nBuscas una llave.");
+		printf("\n1. Revisas la estantería");
+		printf("\n2. Revisas el armario");
+		printf("\n3. Revisas el escritorio");
+		printf("\n4. Dejar de buscar\n:");
+		scanf("%d",&opcion);								
+		switch(opcion){
+			case 1:
 				do{
-					scanf("%d",&opcion_fiera);
-						switch(opcion_fiera){
+					printf("\n1. Revisar estante 1");
+					printf("\n2. Revisar estante 2");
+					printf("\n3. Revisar estante 3");
+					printf("\n4. Dejar de buscar en la estantería\n:");
+					scanf("%d",&opcion_llave);
+					system("cls");
+					switch(opcion_llave){
 						case 1:		
-							printf("Pasas a su lado sin prestar caso a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
-							printf("\nLlegas a la puerta, pero un zarpazo te impide avanzar.\nTratas de escapar, pero la bestia herida te lo impide.");	
-							printf("\nSerás su última cena.");
-							printf("\nHas perdido.");
-							calculodepuntos(v, comienzo);
-							exit (-1);
+							printf("Estante vacío.");
+							v[0].puntos=v[0].puntos-5;	
 						break;
 						case 2:		
-							printf("Te acercas para ayudar a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
-							printf("\nUsando tu camiseta como vendas consigues detener su sangrado.\nLa fiera te agradece la ayuda mediante un zarpazo.");	
-							printf("\nTratas de escapar, pero la bestia herida te lo impide.\nSerás su cena.");
-							printf("\nHas perdido.");
-							calculodepuntos(v,comienzo);
-							exit (-1);
+							printf("Estante vacío.");
+							v[0].puntos=v[0].puntos-5;		
 						break;
 						case 3:		
-							printf("Te acercas con cuidado a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
-							printf("\nEmpuñas la llave de la habitacion blanca y con firmeza la hundes en el cráneo de la bestia.");	
-							printf("\nAcabas con su sufrimiento.\nQue en paz descanse.");
-							printf("\nAtraviesas la puerta.");
-							v[0].puntos+=333;	
+							printf("Estante vacío.");
+							v[0].puntos=v[0].puntos-5;		
+						break;	
+						case 4:
+						break;
 						default: 
 							system("cls");
-							printf("Introduce una respuesta válida:\n"); 
+							printf("Introduce una respuesta válida: ");	
 							v[0].puntos=v[0].puntos-10;	
 						break;
 					}
-				}while((opcion_fiera < 1)||(opcion_fiera > 3));
-				break;
-		}								
+				}while(opcion_llave != 4);
+			break;
+			case 2:
+				do{
+					printf("\n1. Revisar armario izquierdo");
+					printf("\n2. Revisar armario derecho");
+					printf("\n3. Dejar de buscar en el armario\n:");
+					scanf("%d",&opcion_llave);
+					system("cls");
+					switch(opcion_llave){
+						case 1:		
+							printf("Se encuentra vacío.");	
+							v[0].puntos=v[0].puntos-5;	
+						break;
+						case 2:		
+							printf("Se encuentra vacío.");
+							v[0].puntos=v[0].puntos-5;		
+						break;
+						case 3:		
+						break;	
+						default: 
+							system("cls");
+							printf("Introduce una respuesta válida: ");	
+							v[0].puntos=v[0].puntos-10;	
+						break;
+					}
+				}while(opcion_llave != 3);
+			break;
+			case 3:
+				do{
+					printf("\n1. Revisar cajón del escritorio");
+					printf("\n2. Dejar de buscar en el escritorio\n:");
+					scanf("%d",&opcion_llave);
+					system("cls");
+					switch(opcion_llave){
+						case 1:		
+							printf("Hay una llave.");	
+							tener_llave++; 	
+							v[0].puntos+=300;	
+						break;
+						case 2:
+						break;
+						default: 
+							system("cls");
+							printf("Introduce una respuesta válida:\n");	
+							v[0].puntos=v[0].puntos-10;	
+						break;
+					}
+				}while(opcion_llave != 2 && opcion_llave != 1);
+			break;	
+			default:
+				system("cls"); 
+				printf("Introduce una respuesta válida:\n");	
+				v[0].puntos=v[0].puntos-10;	
+			break;
+		} 
+	}while(opcion != 4 && opcion_llave!=1);
+	if(tener_llave != 0){
+		printf("Abres el candado. \nPasas a través del espejo, sin saber que te espera más adelante. \n\n");
+	}else{
+		printf("No encuentras la llave. \nVes la desesperación en tu reflejo. \nPasarás hasta el último de tus días en esa habitación.");
+		printf("\nHas perdido.");
+		calculodepuntos(v,comienzo);
+		exit (-1);
 	}
-	int opcion_cama;
+	do{
+		printf("\nEntras en una habitación.");
+		printf("\nUn rugido te avisa que no te acerques.");
+		printf("\nUna bestia tumbada en su propia sangre impide que llegues a la puerta abierta del otro lado de la habitación.");
+		printf("\nTrata de moverse, pero más sangre brota de su estómago abierto.");
+		printf("\n¿Qué haces?.");
+		printf("\n1.Ignoras a la fiera");
+		printf("\n2.Socorres a la fiera");
+		printf("\n3.Matas a la fiera\n:");
+		scanf("%d",&opcion_fiera);
+		system("cls");
+		switch(opcion_fiera){
+			case 1:		
+				printf("Pasas a su lado sin prestar caso a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
+				printf("\nLlegas a la puerta, pero un zarpazo te impide avanzar.\nTratas de escapar, pero la bestia herida te lo impide.");	
+				printf("\nSerás su última cena.");
+				printf("\nHas perdido.");
+				calculodepuntos(v, comienzo);
+				exit (-1);
+			break;
+			case 2:		
+				printf("Te acercas para ayudar a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
+				printf("\nUsando tu camiseta como vendas consigues detener su sangrado.\nLa fiera te agradece la ayuda mediante un zarpazo.");	
+				printf("\nTratas de escapar, pero la bestia herida te lo impide.\nSerás su cena.");
+				printf("\nHas perdido.");
+				calculodepuntos(v,comienzo);
+				exit (-1);
+			break;
+			case 3:		
+				printf("Te acercas con cuidado a la fiera.\nEn sus jadeos se escapan sus últimos alientos de vida.");
+				printf("\nEmpuñas la llave de la habitacion blanca y con firmeza la hundes en el cráneo de la bestia.");	
+				printf("\nAcabas con su sufrimiento.\nQue en paz descanse.");
+				printf("\nAtraviesas la puerta.");
+				v[0].puntos+=333;	
+			break;
+			default: 
+				system("cls");
+				printf("Introduce una respuesta válida:\n"); 
+				v[0].puntos=v[0].puntos-10;	
+			break;
+		}
+	}while((opcion_fiera < 1)||(opcion_fiera > 3));
+
 	do{
 		printf("\nOtro pasillo.");
 		printf("\nNo señala el piso en el que te encuentras.");
@@ -608,8 +590,7 @@ void partida1jugador(){
 		do{
 			printf("\n1.Seguir recto");
 			printf("\n2.Girar a la izquierda");
-			printf("\n3.Girar a la derecha");
-			printf("\n:");
+			printf("\n3.Girar a la derecha\n:");
 			scanf("%d", &opcion_destino);
 			system("cls");
 			switch(opcion_destino){
@@ -624,8 +605,6 @@ void partida1jugador(){
 			}
 		}while((opcion_destino != 1) && (opcion_destino != 2) && (opcion_destino != 3));
 	}while(y != 5);
-
-
 	do{
 		printf("\nCaes por una rejilla.");
 		printf("\nAlzas la vista.");
@@ -655,10 +634,6 @@ void partida1jugador(){
 		break;
 	}
 	}while((opcion_ordenador != 1) && (opcion_ordenador != 2));
-	
-
-	
-
 	do{
 		printf("\n\nEn la habitación hay una mesa con un mapa.");
 		printf("\nLa salida está delante de tí.");
@@ -684,7 +659,29 @@ void partida1jugador(){
 			break;
 		}
 	}while((opcion_2 != 1) && (opcion_2 != 2));		
-	calculodepuntos(v, comienzo);
+	v[0].puntos=v[0].puntos-0.4*(clock()-comienzo)/(double)CLOCKS_PER_SEC;
+	f=fopen("ranking.txt","r");
+	if(f==NULL){
+		printf("Error en la apertura del fichero\n");
+		exit(-1);
+	}
+	while(fscanf(f,"%s %f",&v[i].nombre,&v[i].puntos)!=EOF){
+		i++;
+	}
+	fclose(f);
+	f=fopen("ranking.txt","w");
+	for(j=0;j<i-2;j++){
+		for(k=j+1;k<i;k++){
+			if(v[j].puntos < v[k].puntos){
+				aux= v[j];
+				v[j] = v[k];
+				v[k] = aux;
+			}
+		}
+	}
+	for(j=0;j<i;j++){
+		fprintf(f,"%s %f\n",v[0].nombre,v[0].puntos);
+	}
 }
 void partida2jugadores(){
 	system("cls");
@@ -882,7 +879,7 @@ void partida2jugadores(){
 		printf("El agua llena por completo la habitación del JUGADOR ROJO.");
 		printf("\nEl JUGADOR ROJO sumergido bajo el agua no se mueve.");
 		printf("\nJUGADOR ROJO ha perdido.");
-		muerte_rojo();
+		muerte_rojo(v,comienzo);
 	}
 
 	printf("\n\n\nNuevamente resuena el molesto pitido.");
@@ -1012,7 +1009,7 @@ void partida2jugadores(){
 		printf("Una niebla morada nubla la habitación del JUGADOR AZUL.");
 		printf("\nEl JUGADOR AZUL no da señales de vida.");
 		printf("\nJUGADOR AZUL ha perdido.");
-		muerte_azul();
+		muerte_azul(v,comienzo);
 	}
 	//
 	//	FINAL MODO MULTIJUGADOR
@@ -1119,87 +1116,7 @@ void partida2jugadores(){
 			break;
 		}
 	}while((opcion_arma < 1)||(opcion_arma > 5));
-}
-void muerte_rojo(jugadores2 v[],clock_t comienzo){
 	
-	printf("\n\n- El experimento ha fallado.");
-	printf("\n- Intento número 69 concluido.");
-	printf("\n- Preparando escenario para la siguiente práctica experimental.");
-	printf("\n- Eliminando al JUGADOR AZUL.");
-	printf("\nUna descarga elécrica atraviesa el cuerpo del JUGADOR AZUL");
-	printf("\nJUGADOR AZUL ha perdido, también.");
-	calculodepuntos2(v, comienzo);
-	exit(-1);
-}
-void muerte_azul(jugadores2 v[],clock_t comienzo){
-	printf("\n\n- El experimento ha fallado.");
-	printf("\n- Intento número 69 concluido.");
-	printf("\n- Preparando escenario para la siguiente práctica experimental.");
-	printf("\n- Eliminando al JUGADOR ROJO.");
-	printf("\nUna descarga elécrica atraviesa el cuerpo del JUGADOR ROJO");
-	printf("\nJUGADOR ROJO ha perdido, también.");	
-	calculodepuntos2(v,comienzo);
-	exit(-1);
-}
-void puntuaciones(){
-	FILE *f;
-	jugadores a[1000];
-	int i=0;
-	f=fopen("ranking.txt","r");
-	if(f==NULL){
-		printf("Error en la apertura del fichero\n");
-		exit(-1);
-	}
-	while(fscanf(f,"%s %f",a[i].nombre,&a[i].puntos)!=EOF){
-		printf("%s\t\t%f\n",a[i].nombre,a[i].puntos);
-		i++;
-	}
-	fclose(f);
-}
-void puntuaciones2(){
-	FILE *f;
-	jugadores2 a[1000];
-	int i=0;
-	f=fopen("r2jugadores.txt","r");
-	if(f==NULL){
-		printf("Error en la apertura del fichero\n");
-		exit(-1);
-	}
-	while(fscanf(f,"%s %s %f",a[i].azul,&a[i].puntotal)!=EOF){
-		printf("%s\t%s\t%f\n",a[i].rojo ,a[i].azul,a[i].puntotal);
-		i++;
-	}
-	fclose(f);
-}
-void calculodepuntos(jugadores v[],clock_t comienzo){
-	jugadores aux;
-	FILE *f;
-	jugadores a[1000];
-	int i=1,j,k;
-	v[0].puntos=v[0].puntos-0.4*(clock()-comienzo)/(double)CLOCKS_PER_SEC ;
-	f=fopen("ranking.txt","r");
-	if(f==NULL){
-		printf("Error en la apertura del fichero\n");
-		exit(-1);
-	}
-	while(fscanf(f,"%s %f",v[i].nombre,&v[i].puntos)!=EOF){
-
-		i++;
-	}
-	fclose(f);
-	f=fopen("ranking.txt","w");
-	for(j=0;j<i-1;j++){
-		for(k=j+1;k<i;k++){
-			if(v[j].puntos < v[k].puntos) {
-				aux= v[j];
-				v[j] = v[k];
-				v[k] = aux;
-			}
-		}
-	}
-	for(j=0;j<i+1;j++){
-		fprintf(f,"%s %f",v[0].nombre,v[0].puntos);
-	}
 }
 void calculodepuntos2(jugadores2 v[],clock_t comienzo){
 	jugadores2 aux;
@@ -1230,7 +1147,87 @@ void calculodepuntos2(jugadores2 v[],clock_t comienzo){
 			}
 		}
 	}
-	for(j=0;j<i+1;j++){
-		fprintf(f,"%s %s %f",v[0].rojo,v[0].azul,v[0].puntotal);
+	for(j=0;j<i;j++){
+		fprintf(f,"%s %s %f\n",v[0].rojo,v[0].azul,v[0].puntotal);
 	}
+}
+void puntuaciones2(){
+	FILE *f;
+	jugadores2 a[1000];
+	int i=0;
+	f=fopen("r2jugadores.txt","r");
+	if(f==NULL){
+		printf("Error en la apertura del fichero\n");
+		exit(-1);
+	}
+	while(fscanf(f,"%s %s %f",&a[i].rojo,&a[i].azul,&a[i].puntotal)!=EOF){
+		printf("%s %s %f\n",a[i].rojo ,a[i].azul,a[i].puntotal);
+		i++;
+	}
+	fclose(f);
+}
+void muerte_rojo(jugadores2 v[],clock_t comienzo){
+	
+	printf("\n\n- El experimento ha fallado.");
+	printf("\n- Intento número 69 concluido.");
+	printf("\n- Preparando escenario para la siguiente práctica experimental.");
+	printf("\n- Eliminando al JUGADOR AZUL.");
+	printf("\nUna descarga elécrica atraviesa el cuerpo del JUGADOR AZUL");
+	printf("\nJUGADOR AZUL ha perdido, también.");
+	calculodepuntos2(v, comienzo);
+	exit(-1);
+}
+void muerte_azul(jugadores2 v[],clock_t comienzo){
+	printf("\n\n- El experimento ha fallado.");
+	printf("\n- Intento número 69 concluido.");
+	printf("\n- Preparando escenario para la siguiente práctica experimental.");
+	printf("\n- Eliminando al JUGADOR ROJO.");
+	printf("\nUna descarga elécrica atraviesa el cuerpo del JUGADOR ROJO");
+	printf("\nJUGADOR ROJO ha perdido, también.");	
+	calculodepuntos2(v,comienzo);
+	exit(-1);
+}
+
+void calculodepuntos(jugadores v[],clock_t comienzo){
+	jugadores aux;
+	FILE *f;
+	int i=1,j,k;
+	v[0].puntos=v[0].puntos-0.4*(clock()-comienzo)/(double)CLOCKS_PER_SEC;
+	f=fopen("ranking.txt","r");
+	if(f==NULL){
+		printf("Error en la apertura del fichero\n");
+		exit(-1);
+	}
+	while(fscanf(f,"%s %f",&v[i].nombre,&v[i].puntos)!=EOF){
+		i++;
+	}
+	fclose(f);
+	f=fopen("ranking.txt","w");
+	for(j=0;j<i-2;j++){
+		for(k=j+1;k<i;k++){
+			if(v[j].puntos < v[k].puntos){
+				aux= v[j];
+				v[j] = v[k];
+				v[k] = aux;
+			}
+		}
+	}
+	for(j=0;j<i;j++){
+		fprintf(f,"%s %f\n",v[0].nombre,v[0].puntos);
+	}
+}
+void puntuaciones(){
+	FILE *f;
+	jugadores v[1000];
+	int i=0;
+	f=fopen("ranking.txt","r");
+	if(f==NULL){
+		printf("Error en la apertura del fichero\n");
+		exit(-1);
+	}
+	while(fscanf(f,"%s %f",&v[i].nombre,&v[i].puntos)!=EOF){
+		printf("%s   %f\n",v[i].nombre,v[i].puntos);
+		i++;
+	}
+	fclose(f);
 }
